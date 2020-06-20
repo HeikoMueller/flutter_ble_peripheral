@@ -16,6 +16,7 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
     var onAdvertisingStateChanged: ((Bool) -> Void)?
     var dataToBeAdvertised: [String: [CBUUID]]!
     var shouldStartAdvertise: Bool = false
+    var service: CBMutableService?
     
     override init() {
         super.init()
@@ -28,6 +29,10 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
         ]
         shouldStartAdvertise = true
         peripheralManagerDidUpdateState(peripheralManager)
+        // add a service
+        let serviceUUID = CBUUID(string: advertiseData.uuid)
+        service = CBMutableService(type: serviceUUID, primary: true)
+        peripheralManager.addService(service)
     }
     
     func stop() {
@@ -35,6 +40,8 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
             print("Stop advertising")
             peripheralManager.stopAdvertising()
             onAdvertisingStateChanged!(false)
+            peripheralManager.removeService(service)
+            service = nil
         } else {
             print("Cannot stop because periperalManager is nil")
         }
