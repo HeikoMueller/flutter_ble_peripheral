@@ -13,5 +13,6 @@ class Data(
         val manufacturerData: List<Int>?,
         val serviceDataUuid: String?,
         val serviceData: List<Int>?,
-        val includeDeviceName: Boolean?
+        val includeDeviceName: Boolean?,
+        val removeAllServices: Boolean?
 )

@@ -12,4 +12,5 @@ class AdvertiseData {
   String serviceDataUuid;
   List<int> serviceData;
   bool includeDeviceName;
+  bool removeAllServices;
 }
