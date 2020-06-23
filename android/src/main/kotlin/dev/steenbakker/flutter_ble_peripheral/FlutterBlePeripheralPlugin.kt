@@ -78,7 +78,8 @@ class FlutterBlePeripheralPlugin: FlutterPlugin, MethodChannel.MethodCallHandler
             arguments["manufacturerData"] as List<Int>?,
             arguments["serviceDataUuid"] as String?,
             arguments["serviceData"] as List<Int>?,
-            arguments["includeDeviceName"] as Boolean?
+            arguments["includeDeviceName"] as Boolean?,
+            arguments["removeAllServices"] as Boolean?
     )
 
     peripheral!!.start(beaconData)

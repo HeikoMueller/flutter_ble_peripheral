@@ -138,6 +138,7 @@ class Peripheral {
         data.serviceDataUuid?.let { dataBuilder.addServiceData(ParcelUuid.fromString(it), serviceData) }
         data.manufacturerId?.let { dataBuilder.addManufacturerData(it, manufacturerData) }
         data.includeDeviceName?.let { dataBuilder.setIncludeDeviceName(it) }
+        data.removeAllServices?.let { dataBuilder.setRemoveAllServices(it) }
         data.transmissionPowerIncluded?.let { dataBuilder.setIncludeTxPowerLevel(it) }
         return dataBuilder.build()
     }
