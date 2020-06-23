@@ -3,6 +3,8 @@
  * All rights reserved. Use of this source code is governed by a
  * BSD-style license that can be found in the LICENSE file.
  */
+/* Adjustments made for exposing GATT server (c) 2020. Heiko Müller */
+
 
 package dev.steenbakker.flutter_ble_peripheral
 
@@ -14,6 +16,9 @@ import android.bluetooth.le.BluetoothLeAdvertiser
 import android.content.Context
 import android.os.ParcelUuid
 import io.flutter.Log
+import android.bluetooth.BluetoothGattServerCallback
+import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothGattService
 
 class Peripheral {
 
@@ -21,7 +26,14 @@ class Peripheral {
     private var mBluetoothLeAdvertiser: BluetoothLeAdvertiser? = null
     private var advertiseCallback: AdvertiseCallback? = null
     private val tag = "FlutterBlePeripheral"
+    private var mBluetoothGattServer: BluetoothGattServer? = null
     
+    private val mGattServerCallback = object : BluetoothGattServerCallback() {
+        override fun onConnectionStateChange(device: BluetoothDevice, status: Int, newState: Int) {
+            Log.i(tag, "GATT-SERVER CALLBACK called Connection Did Change")
+        }
+    }
+
     private val mAdvertiseCallback = object : AdvertiseCallback() {
         override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
             super.onStartSuccess(settingsInEffect)
@@ -72,11 +84,16 @@ class Peripheral {
         if (mBluetoothLeAdvertiser == null) {
             mBluetoothLeAdvertiser = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter.bluetoothLeAdvertiser
         }
+        if (mBluetoothGattServer == null) {
+            mBluetoothGattServer = (context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).openGattServer(context, mGattServerCallback)
+        }        
     }
     
     fun start(data: Data) {
         val settings = buildAdvertiseSettings()
         val advertiseData = buildAdvertiseData(data)
+        val service = buildService(data)
+        mBluetoothGattServer!!.addService(service)        
         mBluetoothLeAdvertiser!!.startAdvertising(settings, advertiseData, mAdvertiseCallback)
     }
 
@@ -91,10 +108,17 @@ class Peripheral {
 
     fun stop() {
         mBluetoothLeAdvertiser!!.stopAdvertising(mAdvertiseCallback)
+        mBluetoothGattServer!!.clearServices()
         advertiseCallback = null
         isAdvertising = false
     }
     
+    private fun buildService(data: Data): BluetoothGattService? {
+        val uuid = ParcelUuid.fromString(data.uuid).uuid
+        val type = BluetoothGattService.SERVICE_TYPE_PRIMARY
+        return BluetoothGattService(uuid, type);
+    }
+
     private fun buildAdvertiseData(data: Data): AdvertiseData? {
         /**
          * Note: There is a strict limit of 31 Bytes on packets sent over BLE Advertisements.
