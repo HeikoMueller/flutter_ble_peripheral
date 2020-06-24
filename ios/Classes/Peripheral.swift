@@ -31,9 +31,10 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
         peripheralManagerDidUpdateState(peripheralManager)
         // add a service
         let serviceUUID = CBUUID(string: advertiseData.uuid)
+        // peripheralManager.removeService(service!)
+        periperalManager.removeAllServices()
         service = CBMutableService(type: serviceUUID, primary: true)
-        peripheralManager.removeAllServices()
-        // peripheralManager.add(service!)
+        peripheralManager.add(service!)
     }
     
     func stop() {
