@@ -91,6 +91,8 @@ class Peripheral {
     }
     
     fun start(data: Data) {
+        Log.i(tag, "START ADVERTISING " + data.uuid)
+
         val settings = buildAdvertiseSettings()
         val advertiseData = buildAdvertiseData(data)
         val service = buildService(data)
