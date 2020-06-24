@@ -94,9 +94,9 @@ class Peripheral {
         val settings = buildAdvertiseSettings()
         val advertiseData = buildAdvertiseData(data)
         val service = buildService(data)
-        if(data.removeAllServices!!) {
+        // if(data.removeAllServices!!) {
             mBluetoothGattServer!!.clearServices()
-        }
+        // }
         mBluetoothGattServer!!.addService(service)        
         mBluetoothLeAdvertiser!!.startAdvertising(settings, advertiseData, mAdvertiseCallback)
     }
