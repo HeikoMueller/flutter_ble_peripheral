@@ -32,7 +32,8 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
         // add a service
         let serviceUUID = CBUUID(string: advertiseData.uuid)
         service = CBMutableService(type: serviceUUID, primary: true)
-        peripheralManager.add(service!)
+        peripheralManager.removeAllServices()
+        // peripheralManager.add(service!)
     }
     
     func stop() {
@@ -40,7 +41,8 @@ class Peripheral : NSObject, CBPeripheralManagerDelegate {
             print("Stop advertising")
             peripheralManager.stopAdvertising()
             onAdvertisingStateChanged!(false)
-            peripheralManager.remove(service!)
+            // peripheralManager.remove(service!)
+            peripheralManager.removeAllServices()
             service = nil
         } else {
             print("Cannot stop because periperalManager is nil")
